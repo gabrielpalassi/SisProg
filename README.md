@@ -1,6 +1,58 @@
-# Sistemas de Programação
+# 🖥️ Sistemas de Programação
 
 Bem-vindo ao repositório dos Laboratórios da disciplina PCS3616 - Sistemas de Programação da Poli-USP. Este repositório contém os exercícios e projetos mais interessantes desenvolvidos ao longo do quadrimestre, cobrindo diversas áreas, como máquinas de Turing, linguagem de máquina MVN, e Assembly.
+
+## Introdução Teórica
+
+### Máquinas de Turing
+
+As [Máquinas de Turing](https://pt.wikipedia.org/wiki/M%C3%A1quina_de_Turing) são modelos teóricos de computação introduzidos por Alan Turing em 1936. Elas são compostas por:
+
+- **Uma fita infinita** que funciona como memória, dividida em células que podem conter símbolos.
+- **Um cabeçote** de leitura/escrita que se move pela fita, lendo e escrevendo símbolos.
+- **Um conjunto de estados** e regras que determinam as ações do cabeçote com base no símbolo lido e no estado atual.'
+
+#### Exemplo Simples:
+
+Uma Máquina de Turing que inverte uma sequência binária (troca 0 por 1 e vice-versa):
+
+- Entrada: `0110`
+- Saída: `1001`
+
+##### Implementação Simples (Pseudo-código):
+
+```
+Estado Inicial: S0
+
+Regras:
+1. Se S0 e lê 0, escreve 1, move para a direita, continua em S0
+2. Se S0 e lê 1, escreve 0, move para a direita, continua em S0
+3. Se S0 e lê branco (fim da fita), para
+```
+
+### Máquinas de Von Neumann
+
+As [Máquinas de Von Neumann](https://pt.wikipedia.org/wiki/Arquitetura_de_von_Neumann), também conhecidas como Arquitetura de Von Neumann, são a base dos computadores modernos, propostas por John von Neumann em 1945. Elas são caracterizadas por:
+
+- **Uma unidade central de processamento (CPU)** que executa instruções.
+- **Memória** que armazena dados e instruções.
+- **Dispositivos de entrada e saída** para comunicação com o mundo externo.
+
+#### Exemplo Simples:
+
+Um programa em linguagem de máquina MVN que soma dois números:
+
+- Entrada: Dois números armazenados nas posições de memória 1 e 2.
+- Saída: A soma dos dois números armazenada na posição de memória 3.
+
+#### Implementação Simples (Pseudo-código MVN)
+
+```
+LOAD M(1)    ; Carrega o valor da posição 1 para o registrador
+ADD M(2)     ; Soma o valor da posição 2 ao valor do registrador
+STORE M(3)   ; Armazena o resultado na posição 3
+HALT         ; Termina a execução
+```
 
 ## Conteúdo do Repositório
 
