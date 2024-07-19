@@ -1,0 +1,164 @@
+0000 0018 ; Ponto de entrada: pulo para as instrucoes
+
+;
+; Entradas, constantes e saida do programa
+;
+
+0006 0000 ; 0 (Constante)
+0008 0001 ; 1 (Constante)
+000A 0002 ; 2 (Constante)
+000C 0003 ; 3 (Constante)
+0010 0003 ; A
+0012 0004 ; B
+0014 0005 ; C
+0016 0000 ; Resultado (0 - falha, 1 - retangulo, 2 - acutangulo, 3 - obtusangulo)
+
+;
+; Instrucoes
+;
+
+; Verificacao de triangulo
+0018 A0A0 ; Chama subrotina de verificacao de triangulo valido
+001A 101E ; Se AC = 0 pula para halt com 0 no resultado
+001C 0020 ; Pula halt para continuar o programa
+001E C01E ; Falha - Halt com 0 no resultado
+
+; Verificacao de triangulo retangulo
+0020 A0F0 ; Chama subrotina de verificacao de triangulo retangulo
+0022 5008 ; AC <= AC - 1
+0024 1028 ; Se AC = 0 pula para halt com 1 no resultado
+0026 002E ; Pula halt para continuar o programa
+0028 8008 ; AC <= 1
+002A 9016 ; Resultado <= AC
+002C C02C ; Halt
+
+; Verificacao de triangulo acutangulo
+002E A050 ; Chama subrotina de verificacao de triangulo acutangulo
+0030 5008 ; AC <= AC - 1
+0032 1036 ; Se AC = 0 pula para halt com 2 no resultado
+0034 003C ; Pula halt para continuar o programa
+0036 800A ; AC <= 2
+0038 9016 ; Resultado <= AC
+003A C03A ; Halt
+
+; Caso passe na verificacao de triangulo e falhe nas outras o triangulo e obtusangulo
+003C 800C ; AC <= 3
+003E 9016 ; Resultado <= AC
+0040 C040 ; Halt
+
+;
+; Subrotinas
+;
+
+; Subrotina - Verifica se o triangulo e obtusangulo (utilizando lei dos cossenos)
+; Retorna no AC 1 se retangulo, 0 se retangulo
+; Instrucoes
+0050 0000 ; Inicio da subrotina
+0052 80E4 ; AC <= A^2
+0054 40E6 ; AC <= AC + B^2
+0056 50E8 ; AC <= AC - C^2
+0058 205C ; Se AC < 0 pula para retorno 0
+005A 0060 ; Pula o retorno com falha e segue a verificacao
+005C 8006 ; AC <= 0
+005E B050 ; Retorna da subrotina
+0060 80E4 ; AC <= A^2
+0062 40E8 ; AC <= AC + C^2
+0064 50E6 ; AC <= AC - B^2
+0066 206A ; Se AC < 0 pula para retorno 0
+0068 006E ; Pula o retorno com falha e segue a verificacao
+006A 8006 ; AC <= 0
+006C B050 ; Retorna da subrotina
+006E 80E6 ; AC <= B^2
+0070 40E8 ; AC <= AC + C^2
+0072 50E4 ; AC <= AC - A^2
+0074 2078 ; Se AC < 0 pula para retorno 0
+0076 007C ; Pula o retorno com falha e retorna 1
+0078 8006 ; AC <= 0
+007A B050 ; Retorna da subrotina
+007C 8008 ; AC <= 1
+007E B050 ; Retorna da subrotina
+
+; Subrotina - Verificacao de triangulo valido (soma de dois lados deve ser maior que o lado restante)
+; Retorna no AC 1 se valido, 0 se invalido
+; Variaveis
+009A 0000 ; (A + B)
+009C 0000 ; (A + C)
+009E 0000 ; (B + C)
+; Instrucoes
+00A0 0000 ; Inicio da subrotina
+00A2 8010 ; AC <= A
+00A4 4012 ; AC <= AC + B
+00A6 909A ; (A + B) <= AC
+00A8 8010 ; AC <= A
+00AA 4014 ; AC <= AC + C
+00AC 909C ; (A + C) <= AC
+00AE 8012 ; AC <= B
+00B0 4014 ; AC <= AC + C
+00B2 909E ; (B + C) <= AC
+00B4 8014 ; AC <= C
+00B6 509A ; AC <= AC - (A + B)
+00B8 20BE ; Se AC < 0 pula o retorno com falha no resultado e segue verificacao
+00BA 8006 ; AC <= 0
+00BC B0A0 ; Retorna da subrotina
+00BE 8012 ; AC <= B
+00C0 509C ; AC <= AC - (A + C)
+00C2 20C8 ; Se AC < 0 pula o retorno com falha no resultado e segue verificacao
+00C4 8006 ; AC <= 0
+00C6 B0A0 ; Retorna da subrotina
+00C8 8010 ; AC <= A
+00CA 509E ; AC <= AC - (B + C)
+00CC 20D2 ; Se AC < 0 pula o retorno com falha no resultado e retorna 1
+00CE 8006 ; AC <= 0
+00D0 B0A0 ; Retorna da subrotina
+00D2 8008 ; AC <= 1
+00D4 B0A0 ; Retorna da subrotina
+
+; Subrotina - Verifica se o triangulo e retangulo (se pitagoras e valido)
+; Retorna no AC 1 se retangulo, 0 se retangulo
+; Variaveis
+00E4 0000 ; A^2
+00E6 0000 ; B^2
+00E8 0000 ; C^2
+00EA 0000 ; (A^2 + B^2)
+00EC 0000 ; (A^2 + C^2)
+00EE 0000 ; (B^2 + C^2)
+; Instrucoes
+00F0 0000 ; Inicio da subrotina
+00F2 8010 ; AC <= A
+00F4 6010 ; AC <= AC * A
+00F6 90E4 ; A^2 <= AC
+00F8 8012 ; AC <= B
+00FA 6012 ; AC <= AC * B
+00FC 90E6 ; B^2 <= AC
+00FE 8014 ; AC <= C
+0100 6014 ; AC <= AC * C
+0102 90E8 ; C^2 <= AC
+0104 80E4 ; AC <= A^2
+0106 40E6 ; AC <= AC + B^2
+0108 90EA ; (A^2 + B^2) <= AC
+010A 80E4 ; AC <= A^2
+010C 40E8 ; AC <= AC + C^2
+010E 90EC ; (A^2 + C^2) <= AC
+0110 80E6 ; AC <= B^2
+0112 40E8 ; AC <= AC + C^2
+0114 90EE ; (B^2 + C^2) <= AC
+0116 80EA ; AC <= (A^2 + B^2)
+0118 50E8 ; AC <= AC - C^2
+011A 111E ; Se AC = 0 pula para retorno 1
+011C 0122 ; Pula o retorno para seguir verificacao
+011E 8008 ; AC <= 1
+0120 B0F0 ; Retorna da subrotina
+0122 80EC ; AC <= (A^2 + C^2)
+0124 50E6 ; AC <= AC - B^2
+0126 112A ; Se AC = 0 pula para retorno 1
+0128 012E ; Pula o retorno para seguir verificacao
+012A 8008 ; AC <= 1
+012C B0F0 ; Retorna da subrotina
+012E 80EE ; AC <= (B^2 + C^2)
+0130 50E4 ; AC <= AC - A^2
+0132 113A ; Se AC = 0 pula para retorno 1
+0134 013A ; Pula o retorno e retorna 0
+0136 8008 ; AC <= 1
+0138 B0F0 ; Retorna da subrotina
+013A 8006 ; AC <= 0
+013C B0F0 ; Retorna da subrotina

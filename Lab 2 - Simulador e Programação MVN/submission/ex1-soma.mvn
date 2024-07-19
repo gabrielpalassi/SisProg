@@ -1,0 +1,11 @@
+0000 0016 ; Ponto de entrada: pulo para as instrucoes
+; Constantes
+0010 FF91 ; A = -111
+0012 014D ; B = 333
+; Variaveis
+0014 0000 ; Resultado
+; Instrucoes
+0016 8010 ; AC <= A
+0018 4012 ; AC =< AC + B
+001A 9014 ; 0x0014 <= AC
+001C C01C ; Halt

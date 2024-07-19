@@ -1,0 +1,40 @@
+ATM
+PCS 2302/2024 autogenerate
+$ 1 # 0 ,
+B $ 1 # 0 ,
+1
+1
+2
+s0
+s9
+s0 0 s0 0 R
+s0 1 s1 0 R
+s0 $ s0 $ R
+s0 # erro # R
+s1 1 s1 1 R
+s1 # s2 # R
+s2 0 s2 0 R
+s2 1 s3 0 R
+s3 1 s3 1 L
+s3 0 s3 0 L
+s3 # s3 # L
+s3 B s4 # L
+s3 $ s0 $ R
+s4 1 s5 0 R
+s4 0 s4 0 L
+s4 # s4 # L
+s4 $ s7 $ R
+s5 # s5 # R
+s5 0 s5 0 R
+s5 1 s5 1 R
+s5 B s6 1 L
+s6 1 s6 1 L
+s6 # s4 # L
+s7 0 s7 1 R
+s7 1 s7 1 R
+s7 # s7 # R
+s7 B s8 1 L
+s8 1 s8 1 L
+s8 # s8 # L
+s8 $ s9 $ R
+end

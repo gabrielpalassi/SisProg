@@ -1,0 +1,228 @@
+0000 0014 ; Ponto de entrada: pulo para as instrucoes
+
+; Leitura e traducao de X e Y para inteiro
+; Variaveis & Constantes
+0002 0030 ; 48 (p/ subtrair 30 do ascii)
+0004 0100 ; 256 (p/ shiftar 2 bits (dividir por 100))
+0006 0010 ; 16 (p/ shiftar 1 bit (multiplicar por 10))
+0008 0000 ; X ASCII
+000A 0000 ; X 
+000C 0000 ; Y ASCII
+000E 0000 ; Y 
+0010 0000 ; (X + Y) ASCII
+0012 0000 ; (X + Y)
+; Instrucoes
+; Leitura e traducao de X
+0014 D000 ; Le dois bytes do teclado (X)
+0016 9008 ; X ASCII <= AC
+; 1o byte
+0018 7004 ; AC <= AC / 100
+001A 5002 ; AC <= AC - 30
+001C 6006 ; AC <= AC * 10
+001E 900A ; X <= AC
+; 2o byte
+0020 8008 ; AC <= X ASCII
+0022 6004 ; AC <= AC * 100
+0024 7004 ; AC <= AC / 100
+0026 5002 ; AC <= AC - 30
+0028 400A ; AC <= AC + X
+002A 900A ; X <= AC
+002C D000 ; Le dois bytes do teclado (espacos)
+; Leitura e traducao de Y
+002E D000 ; Le dois bytes do teclado (Y)
+0030 900C ; Y ASCII <= AC
+; 1o byte
+0032 7004 ; AC <= AC / 100
+0034 5002 ; AC <= AC - 30
+0036 6006 ; AC <= AC * 10
+0038 900E ; Y <= AC
+; 2o byte
+003A 800C ; AC <= Y ASCII
+003C 6004 ; AC <= AC * 100
+003E 7004 ; AC <= AC / 100
+0040 5002 ; AC <= AC - 30
+0042 400E ; AC <= AC + Y
+0044 900E ; Y <= AC
+0046 004E
+
+; Traducao de X e Y para HEX
+; Variaveis & Constantes
+0048 0000 ; X HEX
+004A 0000 ; Y HEX
+004C 000A ; 10 (A)
+; Instrucoes
+; Traducao X para HEX
+004E 800A ; AC <= X
+0050 7006 ; AC <= X / 10
+0052 604C ; AC <= AC * A(10)
+0054 9048 ; X HEX <= AC
+0056 800A ; AC <= X
+0058 6004 ; AC <= AC * 100
+005A 6006 ; AC <= AC * 10
+005C 7004 ; AC <= AC / 100
+005E 7006 ; AC <= AC / 10
+0060 006A
+; Provavel bug: caso dividido 9000 ou 8000 por potencias de 10 obtemos "f" nas casas a esquerda e nao "0"
+; Contonaremos com a rotina abaixo
+0062 0000 ; Variavel para retirar "f"s
+0064 fff9 ; Constante para verificar se possui "f"s
+0066 fff8 ; Constante para verificar se possui "f"s
+0068 fff0 ; Constante para retirar "f"s
+006A 9062 ; Var <= AC
+006C 5064 ; AC <= AC - fff9
+006E 107A ; Se AC = 0 pula para rotina corretora
+0070 8062 ; AC <= Var
+0072 5066 ; AC <= AC - fff8
+0074 107A ; Se AC = 0 pula para rotina corretora
+0076 8062 ; AC <= Var
+0078 007E ; Pula para rotina comum
+007A 8062 ; AC <= Var
+007C 5068 ; AC <= AC - fff0
+; Retornando
+007E 4048 ; AC <= AC + X HEX
+0080 9048 ; X HEX <= AC
+; Traducao Y para HEX
+0082 800E ; AC <= Y
+0084 7006 ; AC <= Y / 10
+0086 604C ; AC <= AC * A(10)
+0088 904A ; Y HEX <= AC
+008A 800E ; AC <= Y
+008C 6004 ; AC <= AC * 100
+008E 6006 ; AC <= AC * 10
+0090 7004 ; AC <= AC / 100
+0092 7006 ; AC <= AC / 10
+; Correcao para o provavel bug
+0094 9062 ; Var <= AC
+0096 5064 ; AC <= AC - fff9
+0098 10A4 ; Se AC = 0 pula para rotina corretora
+009A 8062 ; AC <= Var
+009C 5066 ; AC <= AC - fff8
+009E 10A4 ; Se AC = 0 pula para rotina corretora
+00A0 8062 ; AC <= Var
+00A2 00A8 ; Pula para rotina comum
+00A4 8062 ; AC <= Var
+00A6 5068 ; AC <= AC - fff0
+; Retornando
+00A8 404A ; AC <= AC + Y HEX
+00AA 904A ; Y HEX <= AC
+00AC 00B4
+
+; Traducao de (X + Y) HEX para INTEIRO
+; Variaveis
+00AE 0000 ; (X + Y) HEX
+00B0 0000 ; Quociente
+00B2 0000 ; Quociente * A
+;Instrucoes
+00B4 4048 ; AC <= AC(Y HEX) + X HEX
+00B6 90AE ; (X + Y) HEX <= AC
+; 1o byte
+00B8 704C ; AC <= AC / A
+00BA 90B0 ; Quociente <= AC
+00BC 604C ; AC <= AC * A
+00BE 90B2 ; Quociente * A <= AC
+00C0 80AE ; AC <= (X + Y) HEX
+00C2 50B2 ; AC <= AC - Quociente * A
+00C4 9012 ; (X + Y) <= AC
+; 2o byte
+00C6 80B0 ; AC <= Quociente
+00C8 10F6 ; Se AC = 0 pula para impressao
+00CA 90AE ; (X + Y) HEX <= AC
+00CC 704C ; AC <= AC / A
+00CE 90B0 ; Quociente <= AC
+00D0 604C ; AC <= AC * A
+00D2 90B2 ; Quociente * A <= AC
+00D4 80AE ; AC <= (X + Y) HEX
+00D6 50B2 ; AC <= AC - Quociente * A
+00D8 6006 ; AC <= AC * 10
+00DA 4012 ; AC <= AC + (X + Y)
+00DC 9012 ; (X + Y) <= AC
+; 3o byte
+00DE 80B0 ; AC <= Quociente
+00E0 10F6 ; Se AC = 0 pula para impressao
+00E2 90AE ; (X + Y) HEX <= AC
+00E4 704C ; AC <= AC / A
+00E6 90B0 ; Quociente <= AC
+00E8 604C ; AC <= AC * A
+00EA 90B2 ; Quociente * A <= AC
+00EC 80AE ; AC <= (X + Y) HEX
+00EE 50B2 ; AC <= AC - Quociente * A
+00F0 6004 ; AC <= AC * 100
+00F2 4012 ; AC <= AC + (X + Y)
+00F4 9012 ; (X + Y) <= AC
+
+; Impressao
+; Possivel 1o byte
+00F6 8012 ; AC <= (X + Y)
+00F8 7004 ; AC <= AC / 100
+00FA 1128 ; Se AC = 0 pula para o possivel 2o byte 
+00FC 4002 ; AC <= AC + 30
+00FE E100 ; Imprime 1o byte (se existe)
+; 2o byte confirmado
+0100 8012 ; AC <= (X + Y)
+0102 7006 ; AC <= AC / 10
+0104 6004 ; AC <= AC * 100
+0106 6006 ; AC <= AC * 10
+0108 7004 ; AC <= AC / 100
+010A 7006 ; AC <= AC / 10
+; Correcao para o provavel bug
+010C 9062 ; Var <= AC
+010E 5064 ; AC <= AC - fff9
+0110 111C ; Se AC = 0 pula para rotina corretora
+0112 8062 ; AC <= Var
+0114 5066 ; AC <= AC - fff8
+0116 111C ; Se AC = 0 pula para rotina corretora
+0118 8062 ; AC <= Var
+011A 0120 ; Pula para rotina comum
+011C 8062 ; AC <= Var
+011E 5068 ; AC <= AC - fff0
+; Retornando
+0120 4002 ; AC <= AC + 30
+0122 6004 ; AC <= AC * 100
+0124 9010 ; (X + Y) ASCII <= AC
+0126 0150 ; Pula para o 3o byte
+; Possivel 2o byte
+0128 8012 ; AC <= (X + Y)
+012A 7006 ; AC <= AC / 10
+012C 6004 ; AC <= AC * 100
+012E 6006 ; AC <= AC * 10
+0130 7004 ; AC <= AC / 100
+0132 7006 ; AC <= AC / 10
+; Correcao para o provavel bug
+0134 9062 ; Var <= AC
+0136 5064 ; AC <= AC - fff9
+0138 1144 ; Se AC = 0 pula para rotina corretora
+013A 8062 ; AC <= Var
+013C 5066 ; AC <= AC - fff8
+013E 1144 ; Se AC = 0 pula para rotina corretora
+0140 8062 ; AC <= Var
+0142 0148 ; Pula para rotina comum
+0144 8062 ; AC <= Var
+0146 5068 ; AC <= AC - fff0
+; Retornando
+0148 1150 ; Se AC = 0 pula para o 3o byte
+014A 4002 ; AC <= AC + 30
+014C 6004 ; AC <= AC * 100
+014E 9010 ; (X + Y) ASCII <= AC
+; 3o byte
+0150 8012 ; AC <= (X + Y)
+0152 6004 ; AC <= AC * 100
+0154 6006 ; AC <= AC * 10
+0156 7004 ; AC <= AC / 100
+0158 7006 ; AC <= AC / 10
+; Correcao para o provavel bug
+015A 9062 ; Var <= AC
+015C 5064 ; AC <= AC - fff9
+015E 116A ; Se AC = 0 pula para rotina corretora
+0160 8062 ; AC <= Var
+0162 5066 ; AC <= AC - fff8
+0164 116A ; Se AC = 0 pula para rotina corretora
+0166 8062 ; AC <= Var
+0168 016E ; Pula para rotina comum
+016A 8062 ; AC <= Var
+016C 5068 ; AC <= AC - fff0
+; Retornando
+016E 4002 ; AC <= AC + 30
+0170 4010 ; AC <= AC + (X + Y) ASCII
+0172 9010 ; (X + Y) ASCII <= AC
+0174 E100 ; Imprime 2o byte (se existe) e 3o byte
+0176 C176 ; Halt

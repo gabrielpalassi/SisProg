@@ -1,0 +1,111 @@
+0000 0300 ; Ponto de entrada: pulo para as instrucoes
+
+;
+; Entradas, constantes e saida do programa
+;
+
+;Entradas & saidas
+0010 0000 ; OPCODE
+0012 0000 ; MNEM
+; Constantes
+005E 8000 ; LOAD
+0060 0000 ; 0
+0062 0001 ; 1
+0064 0002 ; 2
+0066 0003 ; 3
+0068 0004 ; 4
+006A 0005 ; 5
+006C 0006 ; 6
+006E 0007 ; 7
+0070 0008 ; 8
+0072 0009 ; 9
+0074 000A ; A
+0076 000B ; B
+0078 000C ; C
+007A 000D ; D
+007C 000E ; E
+007E 000F ; F
+0080 4A50 ; JP
+0082 4A5A ; JZ
+0084 4A4E ; JN
+0086 4C56 ; LV
+0088 002B ; +
+008A 002D ; -
+008C 002A ; *
+008E 002F ; /
+0090 4C44 ; LD
+0092 4D4D ; MM
+0094 5343 ; SC
+0096 5253 ; RS
+0098 484D ; HM
+009A 4744 ; GD
+009C 5044 ; PD
+009E 4F53 ; OS
+
+;
+; Subrotinas
+;
+
+; Subrotina - OP2MNEM
+0100 0000 ; Inicio da subrotina
+0102 0108 ; Pula as variaveis
+; Variaveis
+0104 0000 ; OPCODE comparado
+0106 0080 ; Endereco do MENM do OPCODE comparado
+; Instrucoes da subrotina
+0108 8104 ; AC <= OPCODE comparado
+010A 5010 ; AC <= AC - OPCODE
+010C 111C ; Se AC = 0 pula para carregamento do mnemonico no AC e retorno da subrotina
+; AC != 0
+010E 8104 ; AC <= OPCODE comparado
+0110 4062 ; AC <= AC + 1
+0112 9104 ; OPCODE comparado <= AC
+0114 8106 ; AC <= Endereco do MENM do OPCODE comparado
+0116 4064 ; AC <= AC + 2
+0118 9106 ; Endereco do MENM do OPCODE comparado <= AC
+011a 0108 ; Pula para inicio do loop
+; AC = 0 (Carregamento do mnemonico no AC e retorno da subrotina)
+011C 805E ; AC <= 8000
+011E 4106 ; AC <= AC + Endereco do MENM do OPCODE comparado
+0120 9122 ; Load para o MENM do OPCODE comparado <= AC
+0122 0000 ; Load para o MENM do OPCODE comparado
+0124 9012 ; MNEM <= AC
+0126 B100 ; Retorna da subrotina
+
+; Subrotina - MENM2OP
+0200 0000 ; Inicio da subrotina
+0202 0208 ; Pula as variaveis
+; Variaveis
+0204 0000 ; OPCODE do MNEM comparado
+0206 0080 ; Endereco do MENM comparado
+; Instrucoes da subrotina
+0208 805E ; AC <= 8000
+020A 4206 ; AC <= AC + Endereco do MENM comparado
+020C 920E ; Load para o MNEM comparado <= AC
+020E 0000 ; Load para o MNEM comparado
+0210 5012 ; AC <= AC - MENM
+0212 1222 ; Se AC = 0 pula para carregamento do opcode no AC e retorno da subrotina
+; AC != 0
+0214 8204 ; AC <= OPCODE do MNEM comparado
+0216 4062 ; AC <= AC + 1
+0218 9204 ; OPCODE do MNEM comparado <= AC
+021A 8206 ; AC <= Endereco do MENM comparado
+021C 4064 ; AC <= AC + 2
+021E 9206 ; Endereco do MENM comparado <= AC
+0220 0208 ; Pula para inicio do loop
+; AC = 0 (Carregamento do opcode no AC e retorno da subrotina)
+0222 8204 ; AC <= OPCODE do MNEM comparado
+0224 9010 ; OPCODE <= AC
+0226 B200 ; Retorna da subrotina
+
+;
+; Instrucoes
+;
+
+0300 8062 ; AC <= 1
+0302 9010 ; OPCODE <= AC
+0304 A100 ; Chama subrotina OP2MNEM
+0306 8082 ; AC <= JZ
+0308 9012 ; MNEM <= AC
+030A A200 ; Chama subrotina MNEM2OP
+030C C30C ; Halt
